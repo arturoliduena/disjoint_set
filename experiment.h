@@ -1,5 +1,6 @@
 #ifndef EXPERIMENT_H
 #define EXPERIMENT_H
+
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -99,7 +100,7 @@ void run_experiment(int n, int delta, int T, int min_executions, int epsilon) {
   }
 
   // Name of the CSV file to be written
-  string filename = "data.csv";
+  string filename = "outputs/data.csv";
 
   // comments to be written to the CSV file
   std::vector<std::string> comments = {
