@@ -5,6 +5,8 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include "utils.h"
+#include "UnionFind.h"
 
 using namespace std;
 
@@ -40,35 +42,33 @@ void writeCSV(const string& filename, const vector<vector<string>>& data, const 
   file.close();
 }
 
-template <typename UnionFindType>
-void run_experiment(int n, int delta, int T, int min_executions, int epsilon) {
+void run_experiment(UnionFind* uf, int n, int delta, int T, int min_executions, int epsilon) {
   vector<double> avg_tpl_values(n / delta + 1, 0);
   vector<double> avg_tpu_values(n / delta + 1, 0);
   vector<double> avg_cost_values(n / delta + 1, 0);
   vector<int> executions_count(n / delta + 1, 0);
 
   for (int t = 0; t < T; ++t) {
-    UnionFindType uf(n);
     int processed_pairs = 0;
 
     // Generate distinct pairs of elements (i, j) in random order
     vector<pair<int, int>> pairs = generate_pairs(n);
 
     for (const auto& pair : pairs) {
-      if (!uf.connected(pair.first, pair.second)) {
-        uf.merge(pair.first, pair.second);
+      if (!uf->connected(pair.first, pair.second)) {
+        uf->merge(pair.first, pair.second);
         processed_pairs++;
-        // cout << "blocks: " << uf.nr_blocks() << " ,precessed_pairs: " << processed_pairs << endl;
+        // cout << "blocks: " << uf->nr_blocks() << " ,precessed_pairs: " << processed_pairs << endl;
         // printUF(uf);
         if (processed_pairs % delta == 0 || processed_pairs == n) {
           int index = processed_pairs / delta;
-          avg_tpl_values[index] += uf.tpl();
-          avg_tpu_values[index] += uf.tpu();
-          avg_cost_values[index] += uf.totalCost(epsilon);
+          avg_tpl_values[index] += uf->tpl();
+          avg_tpu_values[index] += uf->tpu();
+          avg_cost_values[index] += uf->totalCost(epsilon);
           executions_count[index]++;
         }
       }
-      if (uf.nr_blocks() == 1) {
+      if (uf->nr_blocks() == 1) {
         break;
       }
     }
@@ -77,16 +77,9 @@ void run_experiment(int n, int delta, int T, int min_executions, int epsilon) {
 
   }
 
-  // Example data to be written to the CSV file
+  // data to be written to the CSV file
   std::vector<std::vector<std::string>> data;
-  //{
-  //     {"Name", "Age", "Country"},
-  //     {"John", "30", "USA"},
-  //     {"Alice", "25", "UK"},
-  //     {"Bob", "35", "Canada"}
-  // };
-
-// Add header
+  // Add header
   data.push_back({ "N", "Average TPL", "Average TPU", "Average Cost" });
 
   for (int i = 0; i < avg_tpl_values.size(); ++i) {
