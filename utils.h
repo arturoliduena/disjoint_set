@@ -3,23 +3,26 @@
 
 #include <iostream>
 #include <vector>
+#include <random>
 #include "UnionFind.h"
 
 using namespace std;
 
 // Generate distinct pairs of elements (i, j) in random order
+
 vector<pair<int, int>> generate_pairs(int n) {
   random_device rd;
   mt19937 g(rd());
   vector<pair<int, int>> pairs;
   for (int i = 0; i < n; ++i) {
     for (int j = i + 1; j < n; ++j) {
-      pairs.push_back({i, j});
+      pairs.push_back({ i, j });
     }
   }
   shuffle(pairs.begin(), pairs.end(), g);
   return pairs;
 }
+
 int depth(const vector<int>& parent, int node, int root) {
   int depth = 0;
   while (node != root) {
@@ -57,7 +60,7 @@ int measure_TPU(UnionFind& uf) {
 void printTreeHelper(vector<int> P, int root, int depth) {
   for (int i = 1; i < depth; ++i)
     cout << "    "; // indentation for depth
-    
+
   if (depth >= 1) {
     cout << "|-- ";
   }
