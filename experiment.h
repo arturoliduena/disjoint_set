@@ -42,7 +42,7 @@ void writeCSV(const string& filename, const vector<vector<string>>& data, const 
   file.close();
 }
 
-void run_experiment(UnionFind* uf, int n, int delta, int T, int min_executions, int epsilon) {
+void run_experiment(UnionFind* uf, int n, vector<pair<int, int>> pairs, int delta, int T, int min_executions, int epsilon) {
   vector<double> avg_tpl_values(n / delta + 1, 0);
   vector<double> avg_tpu_values(n / delta + 1, 0);
   vector<double> avg_cost_values(n / delta + 1, 0);
@@ -51,8 +51,7 @@ void run_experiment(UnionFind* uf, int n, int delta, int T, int min_executions, 
   for (int t = 0; t < T; ++t) {
     int processed_pairs = 0;
 
-    // Generate distinct pairs of elements (i, j) in random order
-    vector<pair<int, int>> pairs = generate_pairs(n);
+
 
     for (const auto& pair : pairs) {
       if (!uf->connected(pair.first, pair.second)) {

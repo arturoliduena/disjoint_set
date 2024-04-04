@@ -59,7 +59,9 @@ int main(int argc, char* argv[]) {
     uf = new QuickUnionFullCompression(n);
     break;
   }
-  run_experiment(uf, n, delta, T, min_executions, epsilon);
+  // Generate distinct pairs of elements (i, j) in random order
+  vector<pair<int, int>> pairs = generate_pairs(n);
+  run_experiment(uf, n, pairs, delta, T, min_executions, epsilon);
   delete uf;
   return 0;
 }
