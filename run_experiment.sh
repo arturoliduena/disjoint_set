@@ -3,7 +3,7 @@
 g++ -std=c++11 -o main main.cpp
 
 UFS=("QU_NC" "QU_FC" "UR_FC" "UR_NC" "UW_FC" "UW_NC")
-numbers=(10 20 30)
+numbers=(1000 5000 10000)
 
 # Loop over both arrays simultaneously
 for ((i=0; i<${#numbers[@]}; i++)); do
