@@ -80,10 +80,11 @@ int main(int argc, char* argv[]) {
   vector<pair<int, int>> pairs = generate_pairs(n);
 
   for (const auto& pair : pairs) {
-    uf->print();
     if (!uf->connected(pair.first, pair.second)) {
+      cout << "Merging " << pair.first << " and " << pair.second << endl;
       uf->merge(pair.first, pair.second);
       processed_pairs++;
+      uf->print();
       // printUF(uf);
     }
     if (uf->nr_blocks() == 1) {

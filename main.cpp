@@ -57,7 +57,7 @@ int main(int argc, char* argv[]) {
   }
 
   int delta = 1; //stoi(argv[2]);
-  const int T = 1;
+  const int T = 20;
   const int min_executions = 5;
   int epsilon = 2; //Cost of updating a pointer
 
