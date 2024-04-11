@@ -40,11 +40,10 @@ void printTreeHelper(vector<int> P, int root, int depth) {
 }
 
 // Print the union-find structure as a tree
-void printAsTree(UnionFind& uf) {
+void printAsTree(vector<int> P) {
   cout << "Union-Find Structure as a Tree:" << endl;
-  vector<int> P = uf.Parents();
   for (int i = 0; i < P.size(); ++i) {
-    if (P[i] == i) {
+    if (P[i] == i || P[i] < 0) {
       printTreeHelper(P, i, 0);
     }
   }

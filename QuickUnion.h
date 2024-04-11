@@ -16,8 +16,6 @@ public:
       P.push_back(i);
     };
     n_blocks = n;
-    TPL = 0;
-    TPU = 0;
     this->type = type;
   };
 
@@ -25,7 +23,6 @@ public:
     int ri = find(i);
     int rj = find(j);
     if (ri != rj) {
-      TPL += pathLength(i) + pathLength(j); // Update TPL
       P[ri] = rj;
       --n_blocks;
     }
