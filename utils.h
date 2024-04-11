@@ -4,15 +4,15 @@
 #include <iostream>
 #include <vector>
 #include <random>
+#include <fstream>
+#include <string>
 #include "UnionFind.h"
 
 using namespace std;
 
-// Generate distinct pairs of elements (i, j) in random order
-
-vector<pair<int, int>> generate_pairs(int n) {
-  random_device rd;
-  mt19937 g(rd());
+// Generate distinct pairs of elements (i, j) in random order for the union-find algorithms
+vector<pair<int, int>> generate_pairs(int n, int seed) {
+  mt19937 g(seed);
   vector<pair<int, int>> pairs;
   for (int i = 0; i < n; ++i) {
     for (int j = i + 1; j < n; ++j) {
@@ -21,39 +21,6 @@ vector<pair<int, int>> generate_pairs(int n) {
   }
   shuffle(pairs.begin(), pairs.end(), g);
   return pairs;
-}
-
-int depth(const vector<int>& parent, int node, int root) {
-  int depth = 0;
-  while (node != root) {
-    ++depth;
-    node = parent[node];
-  }
-  return depth;
-}
-
-int measure_TPL(UnionFind& uf) {
-  int total_path_length = 0;
-  vector<int> P = uf.Parents();
-  for (int i = 0; i < P.size(); ++i) {
-    if (P[i] != i) {
-      int root = uf.find(i);
-      total_path_length += depth(P, i, root);
-    }
-  }
-  return total_path_length;
-}
-
-int measure_TPU(UnionFind& uf) {
-  vector<int> P = uf.Parents();
-  int total_pointer_updates = 0;
-  for (int i = 0; i < P.size(); ++i) {
-    if (P[i] != i) {
-      int root = uf.find(i);
-      total_pointer_updates += depth(P, i, root);
-    }
-  }
-  return total_pointer_updates;
 }
 
 // Helper function for recursive tree traversal
@@ -81,20 +48,38 @@ void printAsTree(UnionFind& uf) {
       printTreeHelper(P, i, 0);
     }
   }
-  cout << "TPL: " << uf.tpl() << endl;
-  cout << "TPU: " << uf.tpu() << endl;
-  cout << "totalCost: " << uf.totalCost(2) << endl;
-  cout << "number of blocks: " << uf.nr_blocks() << endl;
-  cout << "------------------------------" << endl;
 }
 
-// Print the union-find structure as a tree
-void printUF(UnionFind& uf) {
-  printAsTree(uf);
-  cout << "TPL: " << uf.tpl() << endl;
-  cout << "TPU: " << uf.tpu() << endl;
-  cout << "totalCost: " << uf.totalCost(2) << endl;
-  cout << "number of blocks: " << uf.nr_blocks() << endl;
-  cout << "------------------------------" << endl;
+// Function to write data to a CSV file
+void writeCSV(const string& filename, const vector<vector<string>>& data, const vector<string>& comments = {}) {
+  // Open the file for writing
+  ofstream file(filename);
+
+  // Check if the file is opened successfully
+  if (!file.is_open()) {
+    cerr << "Error: Unable to open file: " << filename << endl;
+    return;
+  }
+
+  // Write comments to the file
+  for (const auto& comment : comments) {
+    file << "#" << comment << std::endl;
+  }
+
+  // Write data to the file
+  for (const auto& row : data) {
+    for (size_t i = 0; i < row.size(); ++i) {
+      file << row[i];
+      // Add comma if it's not the last element in the row
+      if (i < row.size() - 1)
+        file << ",";
+    }
+    // Add newline character after each row
+    file << endl;
+  }
+
+  // Close the file
+  file.close();
 }
+
 #endif // UTILITIES_H

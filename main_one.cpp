@@ -2,7 +2,7 @@
 #include <random>
 #include <vector>
 #include <unordered_map>
-#include "experiment.h"
+#include "utils.h"
 #include "UnionFind.h"
 #include "QuickUnion.h"
 #include "UnionWeight.h"

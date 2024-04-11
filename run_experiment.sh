@@ -4,6 +4,9 @@
 
 numbers=(1000 5000 10000)
 
+#create output folder
+mkdir -p outputs
+
 # Loop over both arrays simultaneously
 for ((i=0; i<${#numbers[@]}; i++)); do
     ./main ${numbers[i]}
