@@ -32,7 +32,9 @@ echo "N,TPL,TPU,UF,path compression." >> $output_file
 for ((i=0; i<${#UFs[@]}; i++)); do
     for ((j=0; j<${#pathCompressions[@]}; j++)); do
         echo "Running for ${UFs[i]} with ${pathCompressions[j]} path compression"
-        ./main ${UFs[i]} ${pathCompressions[j]} ${number} >> $output_file
+        for ((t=0; t<20; t++)); do
+            ./main ${UFs[i]} ${pathCompressions[j]} ${number} ${delta} ${t} >> $output_file
+        done
     done
 done
 

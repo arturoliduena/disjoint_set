@@ -80,6 +80,10 @@ public:
       }
       return i;
     }
+    else {
+      std::cerr << "Invalid path compression type" << std::endl;
+      return -1;
+    }
   }
 
   // Performs the union of the classes with representatives ri and rj

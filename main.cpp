@@ -33,9 +33,17 @@ unordered_map<string, PathCompressionType> pathCompressionTypeMap = {
 
 int main(int argc, char* argv[]) {
   // check if an argument is provided
-  if (argc != 4) {
-    cerr << "Usage: " << argv[0] << "<string argument>" << "<string argument>" << " <integer argument>" << endl;
+  if (argc != 6) {
+    cerr << "Usage: " << argv[0] << " <string UF>" << " <string Compression>" << " <integer n>" << " <integer Delta>" << " <integer seed >" << endl;
     return 1; // return error code
+  }
+  // Get the type from command-line arguments
+  string typeStr = argv[1];
+  string pctypeStr = argv[2];
+  // Ensure that the input type is valid
+  if (typeMap.find(typeStr) == typeMap.end()) {
+    cerr << "Invalid value of type. It should like QU NC || QU FC || UR FC || UR NC || UW FC || UW NC." << endl;
+    return 1; // Return error code
   }
   // Convert the argument to an integer
   int n;
@@ -46,13 +54,21 @@ int main(int argc, char* argv[]) {
     cerr << "Invalid argument: " << argv[3] << endl;
     return 1; // Return error code
   }
+  int delta;
+  try {
+    delta = stoi(argv[4]);
+  }
+  catch (const std::invalid_argument& e) {
+    cerr << "Invalid argument: " << argv[4] << endl;
+    return 1; // Return error code
+  }
 
-  // Get the type from command-line arguments
-  string typeStr = argv[1];
-  string pctypeStr = argv[2];
-  // Ensure that the input type is valid
-  if (typeMap.find(typeStr) == typeMap.end()) {
-    cerr << "Invalid value of type. It should like QU NC || QU FC || UR FC || UR NC || UW FC || UW NC." << endl;
+  int seed;
+  try {
+    seed = stoi(argv[5]);
+  }
+  catch (const std::invalid_argument& e) {
+    cerr << "Invalid argument: " << argv[5] << endl;
     return 1; // Return error code
   }
   // Convert the string type to UFType
@@ -61,50 +77,43 @@ int main(int argc, char* argv[]) {
   // convert the string path compression type to PathCompressionType
   PathCompressionType pctype = pathCompressionTypeMap[pctypeStr];
 
-  int delta = 5; //stoi(argv[2]);
-  const int T = 20;
-
   // data to be written to the CSV file
   vector<vector<string>> data;
 
-  // data.push_back({ "N", "TPL", "TPU", "UF", "Compression" });
-
   UnionFind* uf;
 
-  for (int t = 0; t < T; ++t) {
-    int processed_pairs = 0;
-    switch (type) {
-    case QU:
-      uf = new QuickUnion(n, pctype);
-      break;
-    case UW:
-      uf = new UnionWeight(n, pctype);
-      break;
-    case UR:
-      uf = new UnionRank(n, pctype);
-      break;
-    }
-
-    // Generate distinct pairs of elements (i, j) in random order
-    vector<pair<int, int>> pairs = generate_pairs(n, t);
-
-    for (const auto& pair : pairs) {
-      uf->merge(pair.first, pair.second);
-      processed_pairs++;
-      // uf->print();
-      // printAsTree(uf->Parents());
-      if (processed_pairs % delta == 0) {
-        int index = processed_pairs / delta;
-        Pair calc = uf->calculateTPL();
-        data.push_back({ to_string(processed_pairs), to_string(calc.tpl), to_string(calc.tpu), typeStr, pctypeStr });
-      }
-      if (uf->nr_blocks() == 1) {
-        break;
-      }
-    }
-    // printUF(uf);
-    delete uf;
+  int processed_pairs = 0;
+  switch (type) {
+  case QU:
+    uf = new QuickUnion(n, pctype);
+    break;
+  case UW:
+    uf = new UnionWeight(n, pctype);
+    break;
+  case UR:
+    uf = new UnionRank(n, pctype);
+    break;
   }
+
+  // Generate distinct pairs of elements (i, j) in random order
+  vector<pair<int, int>> pairs = generate_pairs(n, seed);
+
+  for (const auto& pair : pairs) {
+    uf->merge(pair.first, pair.second);
+    processed_pairs++;
+    // uf->print();
+    // printAsTree(uf->Parents());
+    if (processed_pairs % delta == 0) {
+      int index = processed_pairs / delta;
+      Pair calc = uf->calculateTPL();
+      data.push_back({ to_string(processed_pairs), to_string(calc.tpl), to_string(calc.tpu), typeStr, pctypeStr });
+    }
+    if (uf->nr_blocks() == 1) {
+      break;
+    }
+  }
+  // printUF(uf);
+  delete uf;
 
   // Write data to standard output
   for (const auto& row : data) {
