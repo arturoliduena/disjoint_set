@@ -61,18 +61,16 @@ int main(int argc, char* argv[]) {
   // convert the string path compression type to PathCompressionType
   PathCompressionType pctype = pathCompressionTypeMap[pctypeStr];
 
-  int delta = 2; //stoi(argv[2]);
+  int delta = 5; //stoi(argv[2]);
   const int T = 20;
-  const int min_executions = 5;
-  int epsilon = 2; //Cost of updating a pointer
+
+  // data to be written to the CSV file
+  vector<vector<string>> data;
+
+  // data.push_back({ "N", "TPL", "TPU", "UF", "Compression" });
 
   UnionFind* uf;
 
-  int total = n / delta + 1;
-
-  vector<double> avg_tpl_values(n * n, 0);
-  vector<double> avg_tpu_values(n * n, 0);
-  vector<int> executions_count(n * n, 0);
   for (int t = 0; t < T; ++t) {
     int processed_pairs = 0;
     switch (type) {
@@ -98,9 +96,7 @@ int main(int argc, char* argv[]) {
       if (processed_pairs % delta == 0) {
         int index = processed_pairs / delta;
         Pair calc = uf->calculateTPL();
-        avg_tpl_values[index] += calc.tpl;
-        avg_tpu_values[index] += calc.tpu;
-        executions_count[index]++;
+        data.push_back({ to_string(processed_pairs), to_string(calc.tpl), to_string(calc.tpu), typeStr, pctypeStr });
       }
       if (uf->nr_blocks() == 1) {
         break;
@@ -110,31 +106,15 @@ int main(int argc, char* argv[]) {
     delete uf;
   }
 
-  // data to be written to the CSV file
-  vector<vector<string>> data;
-  // Add header
-  data.push_back({ "N", "Average TPL", "Average TPU" });
-
-  for (int i = 0; i < avg_tpl_values.size(); ++i) {
-    if (executions_count[i] >= min_executions) {
-      avg_tpl_values[i] /= executions_count[i];
-      avg_tpu_values[i] /= executions_count[i];
-      data.push_back({ to_string(i * delta), to_string(avg_tpl_values[i]), to_string(avg_tpu_values[i]) });
+  // Write data to standard output
+  for (const auto& row : data) {
+    for (const auto& col : row) {
+      cout << col;
+      if (&col != &row.back())
+        cout << ",";
     }
+    cout << endl;
   }
-
-  // Name of the CSV file to be written
-  string filename = string("outputs/") + typeStr + "_" + pctypeStr + "_" + to_string(n) + string(".csv");
-
-  // comments to be written to the CSV file
-  vector<string> comments = {
-      "This is a CSV file containing the average TPL, TPU, and Cost values for the " + typeStr + " algorithm with " + pctypeStr + " path compression.",
-      "The data was generated for n = " + to_string(n) + " and delta = " + to_string(delta) + ".",
-  };
-  // Write data to the CSV file
-  writeCSV(filename, data, comments);
-
-  cout << "Data has been written to " << filename << endl;
 
   return 0;
 }

@@ -23,6 +23,8 @@ public:
   void merge(int i, int j) {
     int ri = find(i);
     int rj = find(j);
+    if (ri == rj) return;
+
     if (P[ri] >= P[rj]) {
       // ri is the smallest/shortest
       P[rj] = min(P[rj], P[ri] - 1);
