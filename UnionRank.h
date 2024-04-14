@@ -13,10 +13,10 @@ using namespace std;
 class UnionRank : public UnionFind {
 public:
   // Creates the partition {{0}, {1}, ..., {n-1}}
-  UnionRank(int n, PathCompressionType type) {
+  UnionRank(int n, PathCompressionType pathCompressionType) {
     P = vector<int>(n, -1);
     n_blocks = n;
-    this->type = type;
+    this->pathCompressionType = pathCompressionType;
   };
 
   // Performs the union of the classes with representatives ri and rj

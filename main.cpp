@@ -34,17 +34,19 @@ unordered_map<string, PathCompressionType> pathCompressionTypeMap = {
 int main(int argc, char* argv[]) {
   // check if an argument is provided
   if (argc != 6) {
-    cerr << "Usage: " << argv[0] << " <string UF>" << " <string Compression>" << " <integer n>" << " <integer Delta>" << " <integer seed >" << endl;
+    cerr << "Usage: " << argv[0] << " <UF>" << " <path compression>" << " <n>" << " <delta>" << " <seed>" << endl;
     return 1; // return error code
   }
   // Get the type from command-line arguments
   string typeStr = argv[1];
   string pctypeStr = argv[2];
+
   // Ensure that the input type is valid
   if (typeMap.find(typeStr) == typeMap.end()) {
-    cerr << "Invalid value of type. It should like QU NC || QU FC || UR FC || UR NC || UW FC || UW NC." << endl;
+    cerr << "Invalid value of type. It should like QU or UR or UW." << endl;
     return 1; // Return error code
   }
+
   // Convert the argument to an integer
   int n;
   try {
@@ -105,7 +107,7 @@ int main(int argc, char* argv[]) {
     // printAsTree(uf->Parents());
     if (processed_pairs % delta == 0) {
       int index = processed_pairs / delta;
-      Pair calc = uf->calculateTPL();
+      Measure calc = uf->calculateTPL();
       data.push_back({ to_string(processed_pairs), to_string(calc.tpl), to_string(calc.tpu), typeStr, pctypeStr });
     }
     if (uf->nr_blocks() == 1) {

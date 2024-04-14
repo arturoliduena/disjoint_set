@@ -13,10 +13,10 @@ using namespace std;
 class UnionWeight : public UnionFind {
 public:
   // Creates the partition {{0}, {1}, ..., {n-1}}
-  UnionWeight(int n, PathCompressionType type) {
+  UnionWeight(int n, PathCompressionType pathCompressionType) {
     P = vector<int>(n, -1);
     n_blocks = n;
-    this->type = type;
+    this->pathCompressionType = pathCompressionType;
   };
 
   // Performs the union of the classes with representatives ri and rj

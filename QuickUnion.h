@@ -11,12 +11,12 @@
 class QuickUnion : public UnionFind {
 public:
   // Creates the partition {{0}, {1}, ..., {n-1}}
-  QuickUnion(int n, PathCompressionType type) {
+  QuickUnion(int n, PathCompressionType pathCompressionType) {
     for (int i = 0; i < n; ++i) {
       P.push_back(i);
     };
     n_blocks = n;
-    this->type = type;
+    this->pathCompressionType = pathCompressionType;
   };
 
   void merge(int i, int j) override {
